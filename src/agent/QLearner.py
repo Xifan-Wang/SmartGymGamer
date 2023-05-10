@@ -1,12 +1,11 @@
 import gymnasium as gym
 import numpy as np
 import time
-from src.utils.agent import q_update_bellmann, epsilon_greedy
+from src.utils.agent import q_update_bellmann, epsilon_greedy, episodes_rewards_plot
 
 class QLearnig():
-    def __init__(self, env:gym.Env, random_seed:int = 43):
+    def __init__(self, env:gym.Env):
         self.env = env
-        self.random_seed = random_seed
         self.observations = env.observation_space.n
         self.actions = env.action_space.n
     
@@ -19,12 +18,13 @@ class QLearnig():
         return True
 
     def learn(self, episodes: int, epsilon, alpha, gamma):
+        self.rewards_list = []
         for episode in range(episodes):
             print(f"episode {episode}")
-            start_time = time.time()
             observation, _ = self.env.reset()
             terminated = False
             steps = 0
+            rewards = 0
             while not terminated and steps < 50:
                 action = epsilon_greedy(
                     self.q_table,self.env,observation,epsilon
@@ -34,25 +34,33 @@ class QLearnig():
                     self.q_table, observation, action, reward, next_observation, alpha, gamma
                     )
                 observation = next_observation
+                rewards += reward
                 steps += 1
-            end_time = time.time()
-            duration = end_time - start_time
-            print(f"duration: {duration}")
+            self.rewards_list.append(rewards)
+        self.episodes_list = list(range(1, episodes+1))
         print("training completed")
-
-        np.save("src/agent/q_table", self.q_table)
         return None
     
-    def decide(self):
-        
+    def plot_rewards(self):
+        fig = episodes_rewards_plot(self.episodes_list, self.rewards_list)
 
-    
-    # def output_model(self, path:str):
-    #     np.save(path, self.q_table)
-    #     return None
-    
-    # def output_rewards(self, path, )
+    def make_action(self, observation):
+        return np.argmax(self.q_table[observation])
 
+class QLearningTest():
+    def __init__(self, env:gym.Env, agent:QLearnig):
+        self.env = env
+        self.agent = agent
+    
+    def run_test(self, episodes):
+        for i in range(episodes):
+            observation, _ = self.env.reset()
+            terminated = False
+            rewards = 0
+            while not terminated and rewards > -20:
+                action = self.agent.make_action(observation)
+                observation, reward, terminated, truncated, _ = self.env.step(action)
+                rewards += reward
 
 
 
