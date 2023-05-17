@@ -2,6 +2,10 @@ import numpy as np
 import plotly.express as px
 import pandas as pd
 
+def select_epsilon(episode):
+    epsilon = max(0.01, 1 * (0.99 ** episode))
+    return epsilon
+
 def epsilon_greedy(q_table, env, observation, epsilon):
     random_number = np.random.uniform(0, 1)
     if random_number < epsilon:

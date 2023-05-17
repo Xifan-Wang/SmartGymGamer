@@ -1,7 +1,7 @@
 import gymnasium as gym
 import numpy as np
 import time
-from src.utils.agent import q_update_bellmann, epsilon_greedy, episodes_rewards_plot
+from src.utils.agent import q_update_bellmann, epsilon_greedy, episodes_rewards_plot, select_epsilon
 
 class QLearnig():
     def __init__(self, env:gym.Env):
@@ -17,7 +17,7 @@ class QLearnig():
         self.q_table = np.load(path)
         return True
 
-    def learn(self, episodes: int, epsilon, alpha, gamma):
+    def learn(self, episodes: int, alpha, gamma):
         self.rewards_list = []
         for episode in range(episodes):
             print(f"episode {episode}")
@@ -26,6 +26,7 @@ class QLearnig():
             steps = 0
             rewards = 0
             while not terminated and steps < 50:
+                epsilon = select_epsilon(episode)
                 action = epsilon_greedy(
                     self.q_table,self.env,observation,epsilon
                 )
@@ -56,11 +57,11 @@ class QLearningTest():
         for i in range(episodes):
             observation, _ = self.env.reset()
             terminated = False
-            rewards = 0
-            while not terminated and rewards > -20:
+            steps = 0
+            while not terminated and steps < 50:
                 action = self.agent.make_action(observation)
                 observation, reward, terminated, truncated, _ = self.env.step(action)
-                rewards += reward
+                steps += 1
 
 
 
