@@ -28,7 +28,7 @@ def frozen_lake_q_learing():
     agent = QLearnig(env=fl_env)
     agent.init_q_table()
     agent.learn(
-        episodes=20000,
+        episodes=200000,
         alpha=0.2,
         gamma=0.99
     )
@@ -47,6 +47,6 @@ if __name__ == "__main__":
     # agent = taxi_q_learning()
     # taxi_test(agent, 10)
     agent = frozen_lake_q_learing()
-    frozen_lake_test(agent, 10)
+    frozen_lake_test(agent, 5)
 
     
