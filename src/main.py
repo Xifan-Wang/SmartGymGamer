@@ -28,7 +28,7 @@ def frozen_lake_q_learing():
     agent = QLearnig(env=fl_env)
     agent.init_q_table()
     agent.learn(
-        episodes=200000,
+        episodes=100000,
         alpha=0.2,
         gamma=0.99
     )
